@@ -32,7 +32,8 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        return view('users.show', compact('user'));
+        $statuses = $user->statuses()->orderByDesc('created_at')->paginate(10);
+        return view('users.show', compact('user', 'statuses'));
     }
 
     public function store(Request $request)
@@ -105,7 +106,7 @@ class UsersController extends Controller
 
     public function confirmEmail($token)
     {
-        $user = User::where('activation_token',$token)->firstOrFail();
+        $user = User::where('activation_token', $token)->firstOrFail();
         $user->activated = true;
         $user->activation_token = null;
         $user->save();
